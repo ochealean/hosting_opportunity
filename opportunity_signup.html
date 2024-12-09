@@ -7,11 +7,16 @@
 </head>
 <body>
     <form id="signupForm">
-        <input id="email" type="text" name="email">
-        <input id="password" type="text" name="password">
+        <label for="firstname">firstname:</label>
+        <input id="firstname" type="text" name="firstname"><br>
+        <label for="lastname">lastname:</label>
+        <input id="lastname" type="text" name="lastname"><br>
+        <label for="email">email:</label>
+        <input id="email" type="text" name="email"><br>
+        <label for="password">password:</label>
+        <input id="password" type="text" name="password"><br>
         <button type="submit">submit</button>
     </form>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
-    <script src="firebase_control.js"></script>
+    <script src="firebase_control.js" type="module"></script>
 </body>
 </html>
