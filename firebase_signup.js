@@ -61,28 +61,3 @@ function insertData(ID, firstname, lastname, email, password) {
 function getValue(id) {
     return document.getElementById(id).value;
 }
-
-document.getElementById('button_get').addEventListener("click", get);
-
-function get() {
-  var userRef = ref(database, 'opportunity_db/users/');
-  onValue(userRef, function(snapshot) {
-      var data = snapshot.val();
-      var emails = [];
-      var passwords = [];
-      // email
-      for (var key in data) {
-          if (data.hasOwnProperty(key)) {
-              emails.push(data[key].email);
-          }
-      }
-      // password
-      for (var key in data) {
-          if (data.hasOwnProperty(key)) {
-              passwords.push(data[key].password);
-          }
-      }
-      console.log(emails);
-      console.log(passwords);
-  });
-}
