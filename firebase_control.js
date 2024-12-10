@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
-import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+import { getStorage, ref as storageRef, uploadBytes } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
 
 // ID generator
 function generateRandomString(length) {
@@ -19,7 +20,7 @@ const firebaseConfig = {
     authDomain: "opportunity-9d3bf.firebaseapp.com",
     databaseURL: "https://opportunity-9d3bf-default-rtdb.firebaseio.com",
     projectId: "opportunity-9d3bf",
-    storageBucket: "opportunity-9d3bf.firebasestorage.app",
+    storageBucket: "opportunity-9d3bf.appspot.com",
     messagingSenderId: "57906230058",
     appId: "1:57906230058:web:4bd2c2b66a97ad34536453",
     measurementId: "G-NNMZ1KHB32"
@@ -29,6 +30,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const database = getDatabase(app);
+const storage = getStorage(app);
 
 document.getElementById('signupForm').addEventListener("submit", submitForm);
 
@@ -42,15 +44,14 @@ function submitForm(e) {
     var lastname = getValue('lastname');
     var email = getValue('email');
     var password = getValue('password');
+    var file = document.getElementById('fileInp').files[0];
 
-    insertData(ID, firstname, lastname, email, password);
+    insertData(ID, firstname, lastname, email, password, file);
 
-    // Log the sign-up event
-    logEvent(analytics, 'sign_up', { method: 'Email' });
     alert('Account created');
 }
 
-function insertData(ID, firstname, lastname, email, password) {
+function insertData(ID, firstname, lastname, email, password, file) {
     set(ref(database, 'opportunity_db/users/' + ID), {
         ID: ID,
         firstname: firstname,
@@ -58,8 +59,40 @@ function insertData(ID, firstname, lastname, email, password) {
         email: email,
         password: password
     });
+
+    if (file) {
+        const storageReference = storageRef(storage, 'images/' + ID);
+        uploadBytes(storageReference, file).then((snapshot) => {
+            console.log('Uploaded a blob or file!');
+        });
+    }
 }
 
 function getValue(id) {
     return document.getElementById(id).value;
+}
+
+document.getElementById('button_get').addEventListener("click", get);
+
+function get() {
+    var userRef = ref(database, 'opportunity_db/users/');
+    onValue(userRef, function(snapshot) {
+        var data = snapshot.val();
+        var emails = [];
+        var passwords = [];
+        // email
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                emails.push(data[key].email);
+            }
+        }
+        // password
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                passwords.push(data[key].password);
+            }
+        }
+        console.log(emails);
+        console.log(passwords);
+    });
 }
