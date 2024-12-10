@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-import { getStorage, ref as storageRef, uploadBytes } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
 
 // ID generator
 function generateRandomString(length) {
@@ -32,7 +32,11 @@ const analytics = getAnalytics(app);
 const database = getDatabase(app);
 const storage = getStorage(app);
 
-document.getElementById('signupForm').addEventListener("submit", submitForm);
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('signupForm').addEventListener("submit", submitForm);
+    document.getElementById('button_get').addEventListener("click", get);
+    document.getElementById('button_getImage').addEventListener("click", getImage);
+});
 
 function submitForm(e) {
     e.preventDefault();
@@ -72,8 +76,6 @@ function getValue(id) {
     return document.getElementById(id).value;
 }
 
-document.getElementById('button_get').addEventListener("click", get);
-
 function get() {
     var userRef = ref(database, 'opportunity_db/users/');
     onValue(userRef, function(snapshot) {
@@ -95,4 +97,18 @@ function get() {
         console.log(emails);
         console.log(passwords);
     });
+}
+
+function getImage() {
+    var userID = prompt("Enter the user ID to retrieve the image:");
+    if (userID) {
+        const storageReference = storageRef(storage, 'images/' + userID);
+        getDownloadURL(storageReference).then((url) => {
+            var img = document.getElementById('displayImage');
+            img.src = url;
+            img.style.display = 'block';
+        }).catch((error) => {
+            console.error("Error getting image URL:", error);
+        });
+    }
 }
