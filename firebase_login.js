@@ -67,7 +67,8 @@ function get() {
                     break;
                 }
         }
-
+console.log(counter_email);
+console.log(counter_password);
         if(counter_email!== null &&counter_email==counter_password){
             // Example usage:
             setCookie("email", email, 7);

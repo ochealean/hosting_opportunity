@@ -75,3 +75,66 @@ function logout()
             console.log('username: '+username);
             console.log('password: '+pword);
             console.log('userid:'+uid);
+
+
+// scratching
+// fetch("https://pokeapi.co/api/v2/pokemon/pikachu")
+// .then(response => {
+//     if(!response.ok)
+//     {
+//         throw new Error("Could not access that data");
+//     }
+//     return response.json();
+// })
+// .then(data => console.log(data))
+// .catch(error => console.error(error));
+
+document.getElementById('searchBtn').addEventListener("click", fetchData);
+async function fetchData()
+{
+    try{
+        const pokemonName = document.getElementById("pokemonSearch").value.toLowerCase();
+
+        const response = await fetch("https://pokeapi.co/api/v2/pokemon/"+pokemonName);
+
+        if(!response.ok)
+        {
+            throw new Error("Could not access that data");
+        }
+        const data = await response.json();
+        console.log(data);
+        var pokeType = [];  //data.type[]
+        var pokeAbilities = []; //data.abilities[]
+        const pokemonSprite = data.sprites.front_default;
+        const imgElement = document.getElementById("pokemonSprite");
+        const card = document.getElementById("cardContainer");
+        
+        const name = document.getElementById("pokename");
+        const types = document.getElementById("types");
+        const abilities = document.getElementById("abilities");
+
+        card.style.display = "block";
+        imgElement.style.display = "block";
+        imgElement.src = pokemonSprite;
+
+        name.innerHTML = "Name: "+data.name;
+        var htmlType = 'Types: ';
+        for(var i=0; i<data.types.length; i++)
+        {
+            htmlType+= data.types[i].type.name;
+            if(!(i==data.types.length-1)) htmlType+="/";
+        }
+        types.innerHTML = htmlType;
+        var htmlAbilites = 'Abilites: ';
+        for(var i=0; i<data.abilities.length; i++)
+        {
+            htmlAbilites+= data.abilities[i].ability.name;
+            if(!(i==data.abilities.length-1)) htmlAbilites+=", ";
+        }
+        abilities.innerHTML = htmlAbilites;
+    }
+    catch(error){
+        console.error(error);
+        alert("Pokemon does not exist.");
+    }
+}
