@@ -103,8 +103,6 @@ async function fetchData()
         }
         const data = await response.json();
         console.log(data);
-        var pokeType = [];  //data.type[]
-        var pokeAbilities = []; //data.abilities[]
         const pokemonSprite = data.sprites.front_default;
         const imgElement = document.getElementById("pokemonSprite");
         const card = document.getElementById("cardContainer");
@@ -112,11 +110,13 @@ async function fetchData()
         const name = document.getElementById("pokename");
         const types = document.getElementById("types");
         const abilities = document.getElementById("abilities");
+        const moves = document.getElementById("moves");
 
         card.style.display = "block";
         imgElement.style.display = "block";
         imgElement.src = pokemonSprite;
 
+        // types
         name.innerHTML = "Name: "+data.name;
         var htmlType = 'Types: ';
         for(var i=0; i<data.types.length; i++)
@@ -125,6 +125,8 @@ async function fetchData()
             if(!(i==data.types.length-1)) htmlType+="/";
         }
         types.innerHTML = htmlType;
+
+        // abilites
         var htmlAbilites = 'Abilites: ';
         for(var i=0; i<data.abilities.length; i++)
         {
@@ -132,6 +134,15 @@ async function fetchData()
             if(!(i==data.abilities.length-1)) htmlAbilites+=", ";
         }
         abilities.innerHTML = htmlAbilites;
+
+        // moves
+        var htmlMoves = 'Moves: ';
+        for(var i=0; i<15; i++)
+        {
+            htmlMoves+= data.moves[i].move.name;
+            if(!(i==15-1)) htmlMoves+=", ";
+        }
+        moves.innerHTML = htmlMoves;
     }
     catch(error){
         console.error(error);
