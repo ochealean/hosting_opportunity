@@ -52,6 +52,7 @@ document.getElementById("registerButton").addEventListener("click", (e) => {
             })
             .then(() => {
                 alert("User Registered Successfully");
+                window.location.href = "opportunity_login.html";
             })
             .catch((error) => {
                 alert("Account is already exist");
