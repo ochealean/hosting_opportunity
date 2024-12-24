@@ -54,7 +54,7 @@ document.getElementById("registerButton").addEventListener("click", (e) => {
                 alert("User Registered Successfully");
             })
             .catch((error) => {
-                alert("Account is already exist: " + error.message);
+                alert("Account is already exist");
             });
     }
 });
