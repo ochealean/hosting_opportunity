@@ -1,17 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
-import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-
-// ID generator
-function generateRandomString(length) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -27,37 +15,46 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const database = getDatabase(app);
 
-document.getElementById('signupForm').addEventListener("submit", submitForm);
+const firstname = document.getElementById("firstname");
+const lastname = document.getElementById("lastname");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
 
-function submitForm(e) {
+document.getElementById("registerButton").addEventListener("click", (e) => {
     e.preventDefault();
-    const userID = generateRandomString(15);
-    const opportunityDB = ref(database, 'opportunity_db/users/' + userID);
+    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    const firstnameVAL = capitalize(firstname.value);
+    const lastnameVAL = capitalize(lastname.value);
+    const emailVAL = email.value;
+    const passwordVAL = password.value;
 
-    var ID = userID;
-    var firstname = getValue('firstname');
-    var lastname = getValue('lastname');
-    var email = getValue('email');
-    var password = getValue('password');
+    if (passwordVAL.length < 6) {
+        alert("Password must be at least 6 characters");
+        return;
+    } else {
+        const auth = getAuth(app);
+        createUserWithEmailAndPassword(auth, emailVAL, passwordVAL)
+            .then((userCredential) => {
+                const user = userCredential.user;
 
-    insertData(ID, firstname, lastname, email, password);
+                sendEmailVerification(user)
+                    .then(() => {
+                        alert("Email Verification Sent");
+                    })
+                    .catch((error) => {
+                        alert("Email not sent: " + error.message);
+                    });
 
-    alert('Account created');
-}
-
-function insertData(ID, firstname, lastname, email, password) {
-    set(ref(database, 'opportunity_db/users/' + ID), {
-        ID: ID,
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-        password: password
-    });
-}
-
-function getValue(id) {
-    return document.getElementById(id).value;
-}
+                return updateProfile(user, {
+                    displayName: `${firstnameVAL} ${lastnameVAL}`
+                });
+            })
+            .then(() => {
+                alert("User Registered Successfully");
+            })
+            .catch((error) => {
+                alert("Account is already exist: " + error.message);
+            });
+    }
+});
