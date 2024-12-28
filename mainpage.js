@@ -90,7 +90,6 @@ document.getElementById('logout_btn').addEventListener('click', () => {
         deleteCookie('email');
         deleteCookie('password');
         deleteCookie('accessToken');
-        deleteCookie('idToken'); // Deletes the ID token cookie
         window.location.href = 'opportunity_login.html'; // Redirect to login page
     }).catch((error) => {
         console.error('Error signing out:', error);
