@@ -19,7 +19,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const database = getDatabase(app);
-console.log(getCookie('accessToken'));
+console.log("access token", getCookie('accessToken'));
 console.log(getCookie('email'));
 console.log(getCookie('password'));
 
@@ -89,11 +89,11 @@ document.getElementById('logout_btn').addEventListener('click', () => {
     signOut(auth).then(() => {
         deleteCookie('email');
         deleteCookie('password');
+        deleteCookie('accessToken');
         window.location.href = 'opportunity_login.html'; // Redirect to login page
     }).catch((error) => {
         console.error('Error signing out:', error);
     });
-        deleteCookie('accessToken');
 });
 
 function deleteCookie(name) {
