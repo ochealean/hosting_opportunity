@@ -33,6 +33,10 @@ function getCookie(name) {
     }
     return null;
 }
+
+console.log(getCookie('accessToken'));
+console.log(getCookie('email'));
+console.log(getCookie('password'));
 if (!(getCookie('accessToken') || (getCookie('email') && getCookie('password')))) {
 
     document.getElementById('loginForm').addEventListener('submit', (e) => {
@@ -87,7 +91,7 @@ if (!(getCookie('accessToken') || (getCookie('email') && getCookie('password')))
                 alert('Invalid Google Account');
             });
     });
-} else window.location.href = "mainpage.html";
+} //else window.location.href = "mainpage.html";
 
 
 
