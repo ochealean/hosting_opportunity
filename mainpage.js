@@ -89,11 +89,11 @@ document.getElementById('logout_btn').addEventListener('click', () => {
     signOut(auth).then(() => {
         deleteCookie('email');
         deleteCookie('password');
-        deleteCookie('accessToken');
         window.location.href = 'opportunity_login.html'; // Redirect to login page
     }).catch((error) => {
         console.error('Error signing out:', error);
     });
+        deleteCookie('accessToken');
 });
 
 function deleteCookie(name) {
