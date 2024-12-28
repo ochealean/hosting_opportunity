@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAtwT5vh0VSYQ3j-qDSjHFI3DsfdzRoCpw",
@@ -21,6 +20,7 @@ const firstname = document.getElementById("firstname");
 const lastname = document.getElementById("lastname");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
+
 document.getElementById("registerButton").addEventListener("click", () => {
     console.log(firstname.value);
     const firstnameVAL = firstname.value;
@@ -31,9 +31,8 @@ document.getElementById("registerButton").addEventListener("click", () => {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, emailVAL, passwordVAL)
     .then((userCredential) => {
-
-    //   di nagsesend yung verification email
         const user = userCredential.user;
+
         sendEmailVerification(auth.currentUser)
             .then(() => {
                 alert("Email Verification Sent");
@@ -152,6 +151,7 @@ function submitForm(e) {
 
     // alert('Account created');
 
+    // no app in getAuth
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, getValue('email'), getValue('password'))
     .then((userCredential) => {
@@ -167,6 +167,7 @@ function submitForm(e) {
             alert("User Registered Failed");
         });
 
+        // suppposedly user yung nakalagay at hindi auth.currentUser
         sendEmailVerification(auth.currentUser)
         .then(() => {
             // Email verification sent!

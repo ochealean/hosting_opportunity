@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithCredential, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,17 +19,83 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const database = getDatabase(app);
-const auth = getAuth(app);
 
-// Example usage:
-var user = getCookie("currentUser");
+if (getCookie('email') && getCookie('password')) {
+    const auth = getAuth(app);
+    const email = getCookie('email');
+    const password = getCookie('password');
 
-if (user === null) {
-    // Redirect to login.html
-    window.location.href = "opportunity_login.html";
-}else{
-    user = JSON.parse(user);
-    document.getElementById("name").innerHTML = 'Welcome, ' + user.displayName;
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            const name = user.displayName;
+            document.getElementById('name').innerHTML = `Welcome, ${name}`;
+        } else if (email && password) {
+            signInWithEmailAndPassword(auth, email, password)
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    const name = user.displayName;
+                    document.getElementById('name').innerHTML = `Welcome, ${name}`;
+                }
+            });
+        }
+        else {
+            window.location.href = 'opportunity_login.html';
+        }
+    });
+} else if (getCookie('accessToken')) {
+    const auth = getAuth(app);
+    const accessToken = getCookie("accessToken");
+        console.log(accessToken);
+    // Check if the access token is from Google or email/password
+    if (isGoogleAccessToken(accessToken)) {
+        const credential = GoogleAuthProvider.credential(null, accessToken);
+        console.log(credential);
+        signInWithCredential(auth, credential)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                console.log("User signed in with credential:", user);
+                document.getElementById("name").innerHTML = 'Welcome, ' + user.displayName;
+            })
+            .catch((error) => {
+                console.error("Error signing in with credential:", error);
+                // Redirect to opportunity_login.html if sign-in fails
+                // window.location.href = "opportunity_login.html";
+            });
+    } else {
+        // console.log(accessToken);
+        // signInWithCustomToken(auth, accessToken)
+        //     .then((userCredential) => {
+        //         user = userCredential.user;
+        //         console.log(user);
+        //         console.log("User signed in with custom token:", user);
+        //         document.getElementById("name").innerHTML = 'Welcome, ' + user.displayName;
+        //     })
+        //     .catch((error) => {
+        //         console.error("Error signing in with custom token:", error);
+        //         // Redirect to opportunity_login.html if sign-in fails
+        //         // window.location.href = "opportunity_login.html";
+        //     });
+    }
+}else window.location.href = 'opportunity_login.html';
+
+
+// Logout function
+document.getElementById('logout_btn').addEventListener('click', () => {
+    const auth = getAuth(app);
+    signOut(auth).then(() => {
+        deleteCookie('email');
+        deleteCookie('password');
+        deleteCookie('accessToken');
+        deleteCookie('idToken'); // Deletes the ID token cookie
+        window.location.href = 'opportunity_login.html'; // Redirect to login page
+    }).catch((error) => {
+        console.error('Error signing out:', error);
+    });
+});
+
+function deleteCookie(name) {
+    document.cookie = name + '=; Max-Age=-99999999;';
 }
 
 function getCookie(name) {
@@ -43,17 +109,11 @@ function getCookie(name) {
     return null;
 }
 
-document.getElementById("logout_btn").addEventListener("click", () => {
-    auth.signOut().then(() => {
-        deleteCookie("currentUser"); // Deletes the "username" cookie
-        // Redirect to login.html
-        window.location.href = "opportunity_login.html";
-    }).catch((error) => {
-        console.log(error);
-    });
-});
-function deleteCookie(name) {
-    document.cookie = name + '=; Max-Age=-99999999;';
+function isGoogleAccessToken(token) {
+    // Implement a check to determine if the token is a Google OAuth token
+    // This is a placeholder function and should be replaced with actual logic
+    // For example, you might check the token format or decode it to check the issuer
+    return token.startsWith("ya29."); // Example check for Google OAuth token
 }
 
 document.getElementById('searchBtn').addEventListener("click", fetchData);

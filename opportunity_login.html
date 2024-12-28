@@ -20,13 +20,14 @@
 </head>
 <body>
     <a href="opportunity_signup.html">Signup</a>
-    <form id="LoginForm">
+    <form id="loginForm">
         <label for="email">email:</label>
-        <input id="email" type="text" name="email"><br>
+        <input id="email" type="text" name="email" required><br>
         <label for="password">password:</label>
-        <input id="password" type="password" name="password"><br>
+        <input id="password" type="password" name="password" required><br>
+        <button id="button_get" type="submit">Login</button>
     </form>
-    <button id="button_get">Login</button>
+    <button id="google_login">Log in with Google</button>
     <script src="firebase_login.js" type="module"></script>
 </body>
 </html>
