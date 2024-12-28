@@ -19,6 +19,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const database = getDatabase(app);
+console.log(getCookie('accessToken'));
+console.log(getCookie('email'));
+console.log(getCookie('password'));
 
 if (getCookie('email') && getCookie('password')) {
     const auth = getAuth(app);
